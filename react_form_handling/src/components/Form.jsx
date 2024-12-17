@@ -5,14 +5,21 @@ import * as yup from 'yup'
 
 const Form = () => {
   const schema = yup.object().shape({
-    fullName: yup.string().required,
-    email: yup.string().email().required,
-    age: yup.number().positive().integer().min(18).required,
-    password: yup.string().min(4).max(20).required,
-    confirmPassword: yup.string().oneOf([yup.ref('password'), null]).required,
+    fullName: yup.string().required('Your full name is required'),
+    email: yup.string().email().required('Please enter an email'),
+    age: yup.number().positive().integer().min(18).required(),
+    password: yup.string().min(4).max(20).required('Please eneter a password'),
+    confirmPassword: yup
+      .string()
+      .oneOf([yup.ref('password'), null], "Passwords don't match")
+      .required('Please eneter a password'),
   })
 
-  const { register, handleSubmit } = useForm({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
     resolver: yupResolver(schema),
   })
 
@@ -28,14 +35,17 @@ const Form = () => {
           placeholder="Full name..."
           {...register('fullName')}
         />
+        <p style={{ color: 'red' }}>{errors.fullName?.message}</p>
       </div>
       <div>
         <label>Email:</label>
         <input type="text" placeholder="Email..." {...register('email')} />
+        <p style={{ color: 'red' }}>{errors.email?.message}</p>
       </div>
       <div>
         <label>Age:</label>
         <input type="number" placeholder="Age..." {...register('age')} />
+        <p style={{ color: 'red' }}>{errors.age?.message}</p>
       </div>
       <div>
         <label>Password:</label>
@@ -44,6 +54,7 @@ const Form = () => {
           placeholder="Password..."
           {...register('password')}
         />
+        <p style={{ color: 'red' }}>{errors.password?.message}</p>
       </div>
       <div>
         <label>Confirm password:</label>
@@ -52,6 +63,7 @@ const Form = () => {
           placeholder="Confirm Password..."
           {...register('confirmPassword')}
         />
+        <p style={{ color: 'red' }}>{errors.confirmPassword?.message}</p>
       </div>
       <input type="submit" />
     </form>
